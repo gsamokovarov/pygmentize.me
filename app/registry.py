@@ -7,6 +7,8 @@ Provides a ``Registrable`` mixin and a ``Registry`` psuedo class.
 
 from abc import ABCMeta
 
+from app.utils import classonlymethod
+
 __all__ = ['Registrable', 'Registry']
 
 
@@ -21,7 +23,7 @@ class Registrable(object):
     Every subclass can register itself by calling the 'register' method.
     '''
 
-    @classmethod
+    @classonlymethod
     def register(cls):
         '''
         Registers the current class to it's own base class registry.
@@ -38,7 +40,7 @@ class Registrable(object):
         else:
             raise TypeError('No registry ancsestor found!')
 
-    @classmethod
+    @classonlymethod
     def make_registry(cls):
         '''
         Makes the current class a registry.
