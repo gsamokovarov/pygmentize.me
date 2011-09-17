@@ -10,8 +10,15 @@ __author__ = 'Genadi Samokovarov'
 import pygments.formatters
 
 from app.handlers.base import FormatterHandler
+from app.registry import register
+from app.routing import Autoroute
 
 
+autoroute = Autoroute(prefix=r'/as/', rule=Autoroute.Rules.lowered_name)
+
+
+@register
+@autoroute
 class HTMLHandler(FormatterHandler):
     '''
     RESTful API for HTML output.
@@ -21,9 +28,9 @@ class HTMLHandler(FormatterHandler):
     FORMATTER = pygments.formatters.HtmlFormatter
     CONTENT_TYPE = 'text/html'
 
-HTMLHandler.register()
 
-
+@register
+@autoroute
 class LatexHandler(FormatterHandler):
     '''
     RESTful API for Latex output.
@@ -33,9 +40,9 @@ class LatexHandler(FormatterHandler):
     FORMATTER = pygments.formatters.LatexFormatter
     CONTENT_TYPE = 'application/x-latex'
 
-LatexHandler.register()
 
-
+@register
+@autoroute
 class RTFHandler(FormatterHandler):
     '''
     RESTful API for RTF output.
@@ -45,9 +52,9 @@ class RTFHandler(FormatterHandler):
     FORMATTER = pygments.formatters.RtfFormatter
     CONTENT_TYPE = 'application/msword'
 
-RTFHandler.register()
 
-
+@register
+@autoroute
 class TerminalHandler(FormatterHandler):
     '''
     RESTFul API for Terminal output.
@@ -55,6 +62,4 @@ class TerminalHandler(FormatterHandler):
 
     SUPPORTS_STYLE_DEFS = False
     FORMATTER = pygments.formatters.TerminalFormatter
-
-TerminalHandler.register()
 

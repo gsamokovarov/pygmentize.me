@@ -6,14 +6,15 @@ Provides a ``Registrable`` mixin and a ``Registry`` psuedo class.
 '''
 
 from abc import ABCMeta
+from collections import defaultdict
 
 from app.utils import classonlymethod
 
-__all__ = ['Registrable', 'Registry']
+__all__ = ['Registrable', 'Registry', 'register', 'registry']
 
 
-# Will I have any benefit of making this tread local?
-_REGISTRABLE_INFO = {}
+# Will I have any benefit of making this thread local?
+_REGISTRABLE_INFO = defaultdict(list)
 
 
 class Registrable(object):
@@ -27,6 +28,11 @@ class Registrable(object):
     def register(cls):
         '''
         Registers the current class to it's own base class registry.
+
+        If the class defines a class method named ``on_registration``, it will be
+        executed upon registration and it's returned value will be stored as
+        data and will be returned for it by ``Registry.entries_with_data_for``.
+        The returned value of ``on_registration`` must be ``None`` or a mapping.
         '''
 
         if isinstance(cls, Registry):
@@ -34,7 +40,15 @@ class Registrable(object):
 
         for base in cls.__bases__:
             if issubclass(base, Registry):
-                _REGISTRABLE_INFO[base].append(cls)
+                if hasattr(cls, 'on_registration'):
+                    data = cls.on_registration()
+
+                    if data is None:
+                        data = {}
+                else:
+                    data = {}
+
+                _REGISTRABLE_INFO[base].append((cls, data))
 
                 break
         else:
@@ -51,7 +65,7 @@ class Registrable(object):
         #        raise TypeError(
         #            'Can not make multiple registries in one chain.')
 
-        _REGISTRABLE_INFO[cls] = []
+        _REGISTRABLE_INFO[cls] # It's a side effect of the default dict.
 
 
 class Registry(object):
@@ -72,9 +86,9 @@ class Registry(object):
         return NotImplemented
 
     @staticmethod
-    def entries_for(cls):
+    def entries_with_data_for(cls):
         '''
-        Returns the entries for the specified registry.
+        Returns the entries with their bounded data for the specified registry.
 
         Raises an ``TypeError`` when the specified class is not a registry.
         '''
@@ -85,9 +99,22 @@ class Registry(object):
         return _REGISTRABLE_INFO[cls]
 
     @staticmethod
+    def entries_for(cls):
+        '''
+        Returns the entries for the specified registry.
+
+        Raises an ``TypeError`` when the specified class is not a registry.
+        '''
+
+        if not issubclass(cls, Registry):
+            raise TypeError('Not a registry!')
+
+        return [r for (r, _) in Registry.entries_with_data_for(cls)]
+
+    @staticmethod
     def clear(cls=None):
         '''
-        Clears the specified registry of its entries or all of purges all fo
+        Clears the specified registry of its entries or all of purges all for
         the registries with their entries of no class is specified.
         '''
 
@@ -98,4 +125,36 @@ class Registry(object):
                 raise TypeError('Not a registry!')
         else:
             _REGISTRABLE_INFO.clear()
+
+
+def registry(cls):
+    '''
+    Class decorator for making registries.
+
+    Provides different syntax for making registries than 
+    ``Base.make_registry()``.
+    '''
+    
+    try:
+        cls.make_registry()
+    except AttributeError:
+        raise TypeError('The class must inherit Registrable')
+    else:
+        return cls
+
+
+def register(cls):
+    '''
+    Class decorator for class registration.
+
+    Provides different syntax for registering to registries than
+    ``Sub.register()``.
+    '''
+
+    try:
+        cls.register()
+    except AttributeError:
+        raise TypeError('The class must inherit Registrable')
+    else:
+        return cls
 

@@ -8,9 +8,11 @@ Collection of base handlers, not used directly into the application.
 import json
 
 import tornado
+import tornado.web
+from tornado.escape import _unicode
 import pygments.lexers
 
-from app.registry import Registrable
+from app.registry import Registrable, registry
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -20,13 +22,17 @@ class BaseHandler(tornado.web.RequestHandler):
     '''
 
     def initialize(self):
+        '''
+        Called by ``tornado.web.RequestHandler`` to initialize subclasses.
+        '''
+
         if hasattr(self, 'set_default_headers'):
-            self.set_default_headers()
+            getattr(self, 'set_default_headers')() # Keep pylint happy..
 
     _ID_TYPE = lambda _: _
     _ARG_DEFAULT = tornado.web.RequestHandler._ARG_DEFAULT
     def get_argument(self, name, default=_ARG_DEFAULT, strip=True,
-            type=_ID_TYPE):
+                     type=_ID_TYPE):
         '''
         Returns the value of the argument with the given name, converting it to
         type if specified.
@@ -41,6 +47,12 @@ class BaseHandler(tornado.web.RequestHandler):
         except ValueError, message:
             raise tornado.web.HTTPError(400, str(message))
 
+    @property
+    def request_content_type(self):
+        headers = self.request.headers
+
+        return _unicode(headers.get("Content-Type", "")).split(";")[0]
+
 
 class APIHandler(BaseHandler):
     '''
@@ -49,7 +61,7 @@ class APIHandler(BaseHandler):
     Takes care of the common parameters processing.
     '''
 
-    def get_common_arguments(self):
+    def get_unencoded_arguments(self):
         '''
         Returns (code, lexer, options) which are the current common arguments
         shared across all of the API requests.
@@ -59,10 +71,28 @@ class APIHandler(BaseHandler):
         lexer = pygments.lexers.get_lexer_by_name(self.get_argument('lexer'))
 
         options = self.get_argument('options', '{}', type=json.loads)
+        if not isinstance(options, dict):
+            options = {}
 
         return (code, lexer, options)
 
-    def send_api_error(self, exception, status_code=404):
+    def get_json_arguments(self):
+        if 'json' not in self.request_content_type:
+            raise tornado.web.HTTPError(400, 'Expected JSON body.') 
+            
+        request = json.loads(self.request.body)
+        try:
+            code = request['code']
+            lexer = request['lexer']
+        except KeyError:
+            raise tornado.web.HTTPError(
+                    'Required key "code" or "lexer" not found.')
+        else:
+            options = request.get('options', {})
+
+            return (code, lexer, options)
+
+    def send_api_error(self, exception, status_code=404, in_json=False):
         '''
         Sends an API error to the client.
 
@@ -72,10 +102,15 @@ class APIHandler(BaseHandler):
         '''
 
         self.set_status(status_code)
+        if in_json:
+            self.finish({
+                'error': str(exception)
+            })
+        else:
+            self.finish(str(exception))
 
-        self.finish(str(exception))
 
-
+@registry
 class FormatterHandler(APIHandler, Registrable):
     '''
     Encapsulates a basic RESTful API for the pygments formatters.
@@ -107,6 +142,8 @@ class FormatterHandler(APIHandler, Registrable):
 
         if hasattr(self, 'CONTENT_TYPE'):
             self.set_header('Content-Type', getattr(self, 'CONTENT_TYPE'))
+
+    #: { Overrideables...
 
     def pre_highlight(self, code, lexer, formatter):
         '''
@@ -144,16 +181,23 @@ class FormatterHandler(APIHandler, Registrable):
 
         return highlight
 
+    #: }
+
     @tornado.web.asynchronous
     def post(self):
+        is_json = 'json' in self.request_content_type
+
         try:
-            code, lexer, options = self.get_common_arguments()
+            if is_json:
+                code, lexer, options = self.get_json_arguments()
+            else:
+                code, lexer, options = self.get_unencoded_arguments()
             formatter = self.FORMATTER(**options)
         except tornado.web.HTTPError, e:
             if e.status_code == 400:
-                self.send_api_error(e.log_message, 400)
+                self.send_api_error(e.log_message, 400, in_json=is_json)
             else:
-                self.send_api_error(e.log_message)
+                self.send_api_error(e.log_message, in_json=is_json)
 
             return
 
@@ -166,7 +210,7 @@ class FormatterHandler(APIHandler, Registrable):
         try:
             highlighted = pygments.highlight(code, lexer, formatter)
         except Exception, e:
-            self.send_api_error(e)
+            self.send_api_error(e, in_json=is_json)
 
             return
 
@@ -182,7 +226,7 @@ class FormatterHandler(APIHandler, Registrable):
                 try:
                     style_defs = formatter.get_style_defs(with_options)
                 except Exception, e:
-                    self.send_api_error(e)
+                    self.send_api_error(e, in_json=is_json)
 
                     return
 
@@ -191,6 +235,4 @@ class FormatterHandler(APIHandler, Registrable):
                 self.write(style_defs)
 
         self.finish()
-
-FormatterHandler.make_registry()
 
