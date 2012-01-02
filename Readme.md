@@ -6,7 +6,7 @@
 
 ## API
 
-Note that there are no trailing slashes at the end if the URL's.
+Note that there are no trailing slashes at the end of the URL's.
 
 **/api/formatter/:name**
 
@@ -14,10 +14,10 @@ Colorizes a chunk of code with the formatter specified by `name`. Every one argu
 
 *Arguments*
 
-- `code` **[Required]** - The code to highlight.
-- `lexer` **[Default: text]** - The name of the lexer to use for the highlight.
-- `options` **[Default: None]** - A JSON object of the options to pass to the formatter.
-- `styles` **[Default: None]**  - A JSON array of options to the formatters `get_style_defs` method. Does nothing if not supported by the formatter.
+- `code` _[Required]_ - The code to highlight.
+- `lexer` _[Default: text]_ - The name of the lexer to use for the highlight.
+- `options` _[Default: None]_ - A JSON object of the options to pass to the formatter.
+- `styles` _[Default: None]_  - A JSON array of options to the formatters `get_style_defs` method. Does nothing if not supported by the formatter.
 
 *Returns*
 
