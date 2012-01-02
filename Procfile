@@ -1,1 +1,1 @@
-web: python runner.py --port=80 --debug=false
+web: python runner.py --port=$PORT --debug=false
