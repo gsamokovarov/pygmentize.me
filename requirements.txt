@@ -1,0 +1,2 @@
+plush>=0.1.0
+pygments>=1.3.0

@@ -1,66 +1,58 @@
-require 'fileutils'
-require 'rubygems'
+%w{rubygems rake}.each { |p| require p }
 
-require 'rake'
+include(Module.new do
+  include FileUtils
 
-def python(input)
-  sh "python #{input}"
-end
+  %w{python nosetests pylint git}.each do |dep|
+    define_method(dep) do |input = nil|
+      sh "#{dep} #{Array === input ? ' '.join(input) : input}"
+    end
+  end
 
-def nosetests(input)
-  sh "nosetests #{input}"
-end
+  self
+end)
 
-clean = namespace :clean do
+namespace :clean do
   desc "Cleans the VIM leftouvers"
   task :vim do
-    sh "find . -name '.*.sw[a-z]' -exec rm '{}' \\;"
+    Dir['**/.*.sw?'].each { |file| rm file }
   end
 
   desc "Cleans the Python bytecode leftouvers"
   task :py do
-    sh "find . -name '*.py[co]' -exec rm '{}' \\;"
+    Dir['**/*.pyc'].each { |file| rm file }
   end
 end
 
 desc "Cleans all"
-task :clean => clean.tasks
+task :clean => [:'clean:vim', :'clean:py']
 
 desc "Runs pylint"
-task :lint do
-  sh "pylint -E app"
-end
+task(:lint) { pylint "-E app" }
 
 desc "Runs the tests"
-task :test, :module do |t, args|
-  args.with_defaults :module => :all
+task(:test) { nosetests 'test' }
 
-  case args[:module]
-  when :all
-    nosetests "-v -w tests"
-  else
-    nosetests "-v tests/test_#{args[:module]}.py"
-  end
-end
+namespace :server do
+  DEFAULT_DEVELOPMENT_PORT = 8000
+  DEFAULT_PRODUCION_PORT = 80
 
-server = namespace :server do
   desc "Runs a development server"
   task :development do
-    python "runner.py port=8080 debug=1"
+    python "runner.py port=#{DEFAULT_DEVELOPMENT_PORT} debug=1 logging=debug"
   end
 
   desc "Runs a production server"
-  task :production => [:dependent, :tasks] do
-    python "runner.py port=80"
+  task :production do
+    python "runner.py port=#{DEFAULT_PRODUCION_PORT}"
   end
 end
 
-git = namespace :git do
+namespace :git do
   desc "Adds all of the current files under git"
   task :add_files => [:clean] do
-    sh "find . -exec git add '{}' \\;"
+    sh "find . | grep -v '.git' | xargs git add"
   end
 end
 
 task :default => [:clean, :lint, :test]
-

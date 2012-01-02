@@ -1,0 +1,6 @@
+#!/bin/sh
+
+runner_dir=`dirname $0`/../..
+cd $runner_dir
+
+exec python runner.py

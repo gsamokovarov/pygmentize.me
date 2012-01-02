@@ -1,0 +1,127 @@
+#p-background {
+  background-color: #4ecff2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; } 
+
+#p-content {
+  margin: 0 auto;
+  width: 960px; 
+  background-color: #fff; 
+  position: relative;
+  top: 46px;
+  opacity: 0.92; filter:alpha(opaciity=92); }
+
+#p-header {
+  background-color: #555; 
+  color: #fff; 
+  position: absolute; 
+  top: 0; left: 0; 
+  width: 100%; height: 46px; 
+  z-index: 10; }
+
+.p-logo { 
+  background: url("/static/img/logo.png") no-repeat;
+  position: absolute;
+  top: 8px; left: 8px; }
+
+#p-cube {
+  position: absolute;
+  background-image: url("/static/img/cube.png");
+  width: 512px; height: 480px; }
+
+/* { Eyes... */
+
+#p-yg #left-eye {
+  position: absolute;
+  background-image: url("/static/img/eyes.png");
+  background-position: 0px -48px;
+  width: 48px; height: 32px;
+  top: 72px; left: 64px; }
+
+#p-yg #inner-left-eye {
+  position: absolute;
+  background-image: url("/static/img/eyes.png");
+  background-position: 0px -36px;
+  width: 12px; height: 12px;
+  top: 90px; left: 88px; }
+
+#p-yg #right-eye {
+  position: absolute;
+  background-image: url("/static/img/eyes.png");
+  background-position: 0px -48px;
+  width: 48px; height: 32px;
+  top: 72px; right: 64px; }
+
+#p-yg #inner-right-eye {
+  position: absolute;
+  background-image: url("/static/img/eyes.png");
+  background-position: 0px -36px;
+  width: 12px; height: 12px;
+  top: 90px; right: 88px; }
+
+/* } End of eyes... */
+
+/* { Clouds... */
+
+#p-clouds #upper-left {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: 0px -64px;
+  width: 160px; height: 64px;
+  top: 128px; left: 50%; }
+
+#p-clouds #upper-right {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: -0px -144px;
+  width: 160px; height: 64px;
+  top: 128px; right: 64; }
+
+#p-clouds #mid-left {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: -0px -224px;
+  width: 160px; height: 64px;
+  top: 224px; left: 96; }
+
+#p-clouds #mid-right {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: -0px -304px;
+  width: 160px; height: 64px;
+  top: 224px; right: 96; }
+
+#p-clouds #lower-left {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: -0px -224px;
+  width: 160px; height: 64px;
+  top: 320px; left: 80; }
+
+#p-clouds #lower-right {
+  position: absolute;
+  background-image: url("/static/img/clouds.png");
+  background-position: -0px -304px;
+  width: 160px; height: 64px;
+  top: 320px; right: 80; }
+
+/* } End of clouds... */
+
+.p-p { color: #f46795; }
+.p-y { color: #258aa6; }
+.p-g { color: #4ecff2; }
+.p-m { color: #bfb32a; }
+.p-e { color: #a69c2d; }
+.p-n { color: #731434; }
+.p-t { color: #f23676; }
+.p-i { color: #189cbf; }
+.p-z { color: #1e83a5; }
+
+#tease {
+  position: fixed;
+  background-image: url("/static/img/tease.png");
+  width: 584px; height: 40px; }

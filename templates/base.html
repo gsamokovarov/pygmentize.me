@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>pygmentize.me - your friendly syntax highlighting service</title>
+    <!--
+    <link href='http://fonts.googleapis.com/css?family=Lekton:400italic' rel='stylesheet' type='text/css' />  
+    <link href='http://fonts.googleapis.com/css?family=Monofett' rel='stylesheet' type='text/css' />
+    !-->
+    <link rel='shortcut icon' type='image/x-icon' href='/static/img/favicon.png' />
+    <link rel="stylesheet" type="text/css" href="/static/css/vendor/reset-min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/vendor/grids-min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/p-main.css" />
+    {% block head_extra %}{% end %}
+  </head>
+  <body>
+    <div id="p-background">
+      <div id="p-yg">
+        <span id="left-eye"></span>
+        <span id="inner-left-eye"></span>
+        <span id="right-eye"></span>
+        <span id="inner-right-eye"></span>
+      </div>
+      <!--
+      <div id="p-clouds">
+        <span id="upper-left"></span>
+        <span id="upper-right"></span>
+        <span id="mid-left"></span>
+        <span id="mid-right"></span>
+        <span id="lower-left"></span>
+        <span id="lower-right"></span>
+      </div>
+      --!>
+      {% block background_extra %}{% end %}
+    </div>
+    <div id="p-header">
+      {% block header %}
+      <a rel="home" href="/"><img class="p-logo" src="/static/img/logo.png" /></a>
+      {% end %}
+      {% block header_extra %}{% end %}
+    </div>
+    <div id="p-content">
+      {% block content %}{% end %}
+    </div>
+    <div id="p-footer">
+      {% block footer %}{% end %}
+    </div>
+    <script type="text/javascript" src="/static/js/vendor/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="/static/js/vendor/plax.js"></script>
+    <script type="text/javascript" src="/static/js/main.js"></script>
+    {% block body_extra %}{% end %}
+  </body>
+</html>

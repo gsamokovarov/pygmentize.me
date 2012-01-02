@@ -1,0 +1,29 @@
+text:
+  also_known_as: [plain]
+  supports_style_defs: false
+  content_type: 'text/plain'
+
+html:
+  also_known_as: [web]
+  supports_style_defs: true
+  content_type: 'text/html'
+
+latex:
+  also_known_as: [tex]
+  supports_style_defs: true
+  content_type: 'application/x-latex'
+
+rtf:
+  also_known_as: [richtext, doc]
+  supports_style_defs: false
+  content_type: 'application/msword'
+
+terminal:
+  also_known_as: [console]
+  supports_style_defs: false
+  content_type: 'text/plain'
+
+terminal256:
+  also_known_as: [console256]
+  supports_style_defs: false
+  content_type: 'text/plain'
