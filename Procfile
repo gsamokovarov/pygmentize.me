@@ -1,1 +1,1 @@
-web: python runner.py --port=80 --host=0.0.0.0
+web: python runner.py --port=80 --debug=false
