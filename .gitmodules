@@ -1,0 +1,3 @@
+[submodule "clients/cobalt"]
+	path = clients/cobalt
+	url = https://github.com/gsamokovarov/cobalt
