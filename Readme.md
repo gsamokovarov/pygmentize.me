@@ -10,7 +10,7 @@ Note that there are no trailing slashes at the end of the URL's.
 
 **/api/formatter/:name**
 
-Colorizes a chunk of code with the formatter specified by `name`. Every one argument is a regular *HTTP POST* query parameter.
+Colorizes a chunk of code with the formatter specified by `name`. Every argument is a regular *HTTP POST* query parameter.
 
 *Arguments*
 
@@ -31,16 +31,19 @@ The supported formatters and theirs metadata in a *JSON* object.
 
 *Example*
 
-    {'text':
-      {'also_known_as': ['plain']},
-      {'supports_style_defs': false},
-      {'content_type': 'text/plain'}}
+``` javascript
+{'text':
+  {'also_known_as': ['plain']},
+  {'supports_style_defs': false},
+  {'content_type': 'text/plain'}}
+```
 
 ## Clients
 
 **node.js**
 
-- [Cobalt](https://github.com/gsamokovarov/cobalt) - A [node.js](http://nodejs.org) client written in CoffeeScript.
+- [Cobalt](https://github.com/gsamokovarov/cobalt) - A [node.js](http://nodejs.org) client written in [CoffeeScript](http://coffeescript.org).
+- [Carmine](https://github.com/gsamokovarov/carmine) - [Ruby](http://ruby-lang.org) client.
 
 ## License
 
