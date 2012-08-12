@@ -27,3 +27,8 @@ terminal256:
   also_known_as: [console256]
   supports_style_defs: false
   content_type: 'text/plain'
+
+png:
+  also_known_as: [image]
+  supports_style_defs: false
+  content_type: 'image/png'
